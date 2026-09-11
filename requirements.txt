@@ -14,6 +14,5 @@ pytest-mock>=3.12,<4.0
 # mypy>=1.8,<2.0
 # types-requests>=2.31,<3.0
 
-# Browser automation (uncomment if needed — install separately)
-# playwright>=1.40,<2.0
-# selenium>=4.15,<5.0
+# Browser automation for Reddit task
+playwright>=1.40,<2.0

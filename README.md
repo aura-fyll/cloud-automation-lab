@@ -87,7 +87,7 @@ cloud-automation/
 | `system_info` | Collects non-sensitive VM information (OS, disk, memory) | No |
 | `public_api` | Calls a public API with error handling and JSON parsing | No |
 | `authed_api` | Template for accessing an authorized API | Yes — see Secrets |
-| `file_processing` | Downloads and processes data, generates artifacts | No |
+| `reddit_automation` | Browser automation for Reddit (Playwright) | Yes — REDDIT_USERNAME, REDDIT_PASSWORD |
 
 ---
 
@@ -150,6 +150,8 @@ For the `authed_api` template or future authenticated tasks, add these secrets:
 |-------------|-------------|--------------|
 | `SERVICE_API_TOKEN` | API token for the authorized service | `authed_api` task |
 | `SERVICE_BASE_URL` | Base URL of the API (e.g., `https://api.example.com/v1`) | `authed_api` task |
+| `REDDIT_USERNAME` | Reddit account username | `reddit_automation` task |
+| `REDDIT_PASSWORD` | Reddit account password | `reddit_automation` task |
 
 To add secrets:
 

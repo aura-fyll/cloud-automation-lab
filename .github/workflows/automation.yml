@@ -22,6 +22,7 @@ on:
           - public_api
           - authed_api
           - file_processing
+          - reddit_automation
 
   # Scheduled execution (daily at 06:00 UTC)
   schedule:
@@ -61,6 +62,12 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      # Step 3b: Install Playwright browser (needed for browser tasks)
+      - name: Install Playwright browsers
+        if: env.TASK_NAME == 'reddit_automation'
+        run: |
+          python -m playwright install chromium
+
       # Step 4: Validate configuration
       - name: Validate configuration
         run: |
@@ -78,6 +85,9 @@ jobs:
           # Credentials for the authenticated API template
           SERVICE_API_TOKEN: ${{ secrets.SERVICE_API_TOKEN }}
           SERVICE_BASE_URL: ${{ secrets.SERVICE_BASE_URL }}
+          # Credentials for Reddit browser automation
+          REDDIT_USERNAME: ${{ secrets.REDDIT_USERNAME }}
+          REDDIT_PASSWORD: ${{ secrets.REDDIT_PASSWORD }}
 
       # Step 6: Upload non-sensitive artifacts
       - name: Upload artifacts
