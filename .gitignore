@@ -1,0 +1,68 @@
+# cloud-automation-lab .gitignore
+#
+# NEVER commit credentials, tokens, or sensitive configuration files.
+
+# Environment files with secrets
+.env
+.env.local
+.env.production
+.env.development
+
+# Python
+__pycache__/
+*.py[cod]
+*.so
+*.egg-info/
+dist/
+build/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg
+*.whl
+.installed.cfg
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# IDE / Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+*.iml
+
+# Testing
+.coverage
+htmlcov/
+.pytest_cache/
+.tox/
+
+# Logs
+*.log
+/logs/
+
+# Artifacts (generated at runtime)
+/tmp/automation-outputs/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Auto-generated
+*.pyc
+
+# Secrets (any file with these patterns should be double-checked)
+*secret*
+*token*
+*credential*
+id_rsa*
+id_ecdsa*
+*.pem

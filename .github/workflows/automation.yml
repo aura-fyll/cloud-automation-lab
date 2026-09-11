@@ -1,0 +1,101 @@
+# cloud-automation-lab — Main Automation Workflow
+#
+# This workflow runs automation tasks on GitHub-hosted Ubuntu runners.
+# Tasks are selected manually via workflow_dispatch or run on a schedule.
+#
+# Permissions follow the principle of least privilege.
+# Only increase if a specific task requires it.
+
+name: Automation
+
+on:
+  # Manual trigger with task selection
+  workflow_dispatch:
+    inputs:
+      task:
+        description: "Select an automation task"
+        required: true
+        type: choice
+        options:
+          - example
+          - system_info
+          - public_api
+          - authed_api
+          - file_processing
+
+  # Scheduled execution (daily at 06:00 UTC)
+  schedule:
+    - cron: "0 6 * * *"
+
+# Default permissions — read-only repository access
+permissions:
+  contents: read
+
+env:
+  # Pass the selected task to the application
+  AUTOMATION_TASK: ${{ inputs.task || 'example' }}
+
+jobs:
+  run-automation:
+    runs-on: ubuntu-latest
+
+    # Allow scheduled runs to pick a default task
+    env:
+      TASK_NAME: ${{ inputs.task || 'system_info' }}
+
+    steps:
+      # Step 1: Check out the repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Step 2: Set up Python runtime
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      # Step 3: Install dependencies
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # Step 4: Validate configuration
+      - name: Validate configuration
+        run: |
+          echo "Selected task: ${{ env.TASK_NAME }}"
+          python -c "import os; task=os.environ.get('TASK_NAME',''); assert task in ['example','system_info','public_api','authed_api','file_processing'], f'Unknown task: {task}'"
+          echo "Configuration validation passed."
+
+      # Step 5: Run the selected automation task
+      - name: Run automation task
+        id: run-task
+        run: |
+          python -m src.main --task "${{ env.TASK_NAME }}"
+        env:
+          # Only expose secrets to the step that needs them
+          # Credentials for the authenticated API template
+          SERVICE_API_TOKEN: ${{ secrets.SERVICE_API_TOKEN }}
+          SERVICE_BASE_URL: ${{ secrets.SERVICE_BASE_URL }}
+
+      # Step 6: Upload non-sensitive artifacts
+      - name: Upload artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: automation-outputs
+          path: /tmp/automation-outputs/
+          # Only non-sensitive outputs (task-generated files)
+          # Never upload credential files, token files, or sensitive screenshots
+          if-no-files-found: ignore
+
+      # Step 7: Report success or failure
+      - name: Report completion
+        if: always()
+        run: |
+          if [ "${{ steps.run-task.outcome }}" = "success" ]; then
+            echo "::notice::Automation task completed successfully."
+          else
+            echo "::error::Automation task failed. Check the logs above for details."
+          fi
