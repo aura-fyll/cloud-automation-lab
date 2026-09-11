@@ -72,7 +72,7 @@ jobs:
       - name: Validate configuration
         run: |
           echo "Selected task: ${{ env.TASK_NAME }}"
-          python -c "import os; task=os.environ.get('TASK_NAME',''); assert task in ['example','system_info','public_api','authed_api','file_processing'], f'Unknown task: {task}'"
+          python -c "import os; task=os.environ.get('TASK_NAME',''); assert task in ['example','system_info','public_api','authed_api','file_processing','reddit_automation'], f'Unknown task: {task}'"
           echo "Configuration validation passed."
 
       # Step 5: Run the selected automation task
